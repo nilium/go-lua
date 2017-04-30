@@ -348,6 +348,25 @@ func TestErrorf(t *testing.T) {
 	}
 }
 
+func TestConcurrentNext(t *testing.T) {
+	testString(t, `
+	t = {}
+	t[1], t[2], t[3] = true, true, true
+
+	r = {}
+	for k1 in pairs(t) do
+		r[#r + 1] = k1
+		for k2 in pairs(t) do
+			r[#r + 1] = k2
+		end
+	end
+
+	got = table.concat(r, "")
+	want = "112321233123"
+	assert(got == want, "got " .. got .. "; want " .. want)
+	`)
+}
+
 func TestArrayHashNext(t *testing.T) {
 	testString(t, `
 	print("BEGIN TEST")
